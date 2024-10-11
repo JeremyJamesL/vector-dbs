@@ -19,6 +19,7 @@ app.listen(port, () => {
 
 app.get("/get-results", async (req, res) => {
   const query = req.query.q;
+  const filterVal = req.query.filter;
   const extractor = await pipeline(
     "feature-extraction",
     "Xenova/all-MiniLM-L6-v2"
@@ -28,17 +29,25 @@ app.get("/get-results", async (req, res) => {
     normalize: true,
   });
   const vecArr = Array.from(output.data);
+
   const queryResponse = await index.query({
     vector: vecArr,
     topK: 100,
     includeMetadata: true,
+    ...(filterVal && {
+      filter: {
+        categories: { $in: [filterVal] },
+      },
+    }),
   });
+
   const productsArr = queryResponse.matches.map((el) => {
     return {
       score: el.score,
       id: el.id,
       name: el.metadata.name,
       image: el.metadata.image,
+      primaryCategory: el.metadata.categories[0],
     };
   });
   res.status(200).send(productsArr);

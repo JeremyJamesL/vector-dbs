@@ -24,10 +24,17 @@
         id="search-box"
         class="border-2 w-full h-[40px] p-2 text-lg mb-5"
       />
-      <ul class="grid grid-cols-6 gap-4" id="hits">
-        Start typing more than 5 character to get results...
-      </ul>
+      <div class="app flex gap-20">
+        <aside class="min-w-[200px]">
+          <div class="filters">
+            <ul class="filters__categories"></ul>
+          </div>
+        </aside>
+        <ul class="grid grid-cols-4 grid-rows-auto gap-4" id="hits">
+          <p>Start typing more than 5 character to get results...</p>
+        </ul>
+      </div>
     </main>
-    <script src="index.js"></script>
+    <script src="./index.js"></script>
   </body>
 </html>
