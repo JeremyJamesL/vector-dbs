@@ -1,15 +1,20 @@
 const searchBar = document.querySelector("#search-box");
 const hits = document.querySelector("#hits");
 const categoryFilters = document.querySelector(".filters__categories");
+const devOrProd = "DEV";
 
 const callPinecone = async (query, filterVal) => {
   const encodedQuery = encodeURIComponent(query);
   const encodedFilter = encodeURIComponent(filterVal);
+  const rootURL =
+    devOrProd == "PROD"
+      ? "https://semantic-search.jezl.xyz"
+      : "http://localhost:3000";
 
   const urlString =
     encodedFilter !== "undefined"
-      ? `http://localhost:3000/get-results?q=${encodedQuery}&filter=${encodedFilter}`
-      : `http://localhost:3000/get-results?q=${encodedQuery}`;
+      ? `${rootURL}/get-results?q=${encodedQuery}&filter=${encodedFilter}`
+      : `${rootURL}/get-results?q=${encodedQuery}`;
 
   const response = await fetch(urlString);
   const data = await response.json();
@@ -23,10 +28,18 @@ const updateHits = (results) => {
   let html = results
     .map((result) => {
       return `
-        <li class="text-center border-2 p-3">
-           <img src=${result.image} class="max-w-[150px] h-auto mb-5 m-auto"/>
-           <h2 class="text-bold">${result.name}</h2>
-        </li>
+      <div class="card bg-base-100 py-2 shadow-xl">
+        <figure>
+          <img
+            src="${result.image}"
+            alt="Shoes"
+            class="max-h-[175px]" />
+
+        </figure>
+        <div class="card-body justify-end  p-2">
+          <h2 class="font-medium text-md">${result.name}!</h2>
+        </div>
+      </div>
        `;
     })
     .join("");
@@ -58,11 +71,11 @@ searchBar.addEventListener("input", async (e) => {
   const searchQuery = e.target.value;
 
   if (searchQuery.length <= 5) {
-    hits.innerHTML = "Start typing more than 5 character to get results...";
+    hits.innerHTML = "";
     categoryFilters.innerHTML = "";
+    ("Start typing more than 5 character to get results...");
     return;
   }
-
   callPinecone(searchQuery);
 });
 

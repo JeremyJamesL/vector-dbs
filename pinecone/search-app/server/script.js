@@ -17,6 +17,10 @@ app.listen(port, () => {
   console.log("app listening on", port);
 });
 
+app.get("/", (req, res) => {
+  console.log(req);
+});
+
 app.get("/get-results", async (req, res) => {
   const query = req.query.q;
   const filterVal = req.query.filter;
